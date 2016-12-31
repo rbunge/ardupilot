@@ -93,6 +93,8 @@ static void update_servos(void){
 //  hal.rcout->write(4, AA241X_flap_servo_PWM);
 //  hal.rcout->write(5, AA241X_roll2_servo_PWM);
 
+// Added dummy commets for first commit
+
   channel_roll->radio_out     = Roll_servo_PWM;  // consider creating variable called servo_Ch_Out1_PWM, that replaces Roll_servo_PWM.  
   channel_pitch->radio_out    = Pitch_servo_PWM;  // Likewise for other channels.  This allows the user to define a custom mapping function from control variables to servo channels, using variable naming that is generic (not particular to a given configuration).
   channel_throttle->radio_out = Throttle_servo_PWM;
