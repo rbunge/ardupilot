@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F85D9F47-0481-44AA-92F3-90C59C88BCC1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MyArduPlane</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>26E26368-0402-42D6-BE7A-2A35DFEF319F</key>
+		<string>https://github.com/diydrones/ardupilot.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MyArduPlane.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>26E26368-0402-42D6-BE7A-2A35DFEF319F</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/diydrones/ardupilot.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>26E26368-0402-42D6-BE7A-2A35DFEF319F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>26E26368-0402-42D6-BE7A-2A35DFEF319F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ardupilot</string>
+		</dict>
+	</array>
+</dict>
+</plist>
