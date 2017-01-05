@@ -50,24 +50,7 @@
 
 const int Competition_day = 99;
 
-//static int16_t AA241X_roll_servo_PWM = 901;
-//static int16_t AA241X_pitch_servo_PWM = 901;
-//static int16_t AA241X_throttle_servo_PWM = 901;
-//static int16_t AA241X_rudder_servo_PWM = 901;
-//static int16_t AA241X_flap_servo_PWM = 901;
-//static int16_t AA241X_roll2_servo_PWM = 901;
-
-//static int16_t RC_roll_PWM;
-//static int16_t RC_pitch_PWM;
-//static int16_t RC_throttle_PWM;
-//static int16_t RC_rudder_PWM;
-//static int16_t RC_flap_PWM;
-//static int16_t RC_roll2_PWM;
-
-
-
 static struct Location center_lake_lag;
-
 static char sighted_persons = 0; 
 static char sightedPerson[4] = {0, 0, 0};
 static float CPU_time_sight_ms = 0.0;
@@ -79,29 +62,15 @@ static float Y_person_truth[4];
 
 // UPDATE SERVO POSITIONS
 static void update_servos(void){
-//  AA241X_roll_servo_PWM     = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*Roll_servo/100.0); 
-//  AA241X_pitch_servo_PWM    = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*Pitch_servo/100.0); 
-//  AA241X_throttle_servo_PWM = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*Throttle_servo/100.0); 
-//  AA241X_rudder_servo_PWM   = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*Rudder_servo/100.0); 
-//  AA241X_flap_servo_PWM   = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*flap_servo/100.0);
-//  AA241X_roll2_servo_PWM   = (int16_t)(PWM_MIN  + (PWM_MAX - PWM_MIN)*roll2_servo/100.0);
-//  
-//  channel_roll->radio_out     = constrain_int16(AA241X_roll_servo_PWM,     PWM_MIN, PWM_MAX);
-//  channel_pitch->radio_out    = constrain_int16(AA241X_pitch_servo_PWM,    PWM_MIN, PWM_MAX);
-//  channel_throttle->radio_out = constrain_int16(AA241X_throttle_servo_PWM, PWM_MIN, PWM_MAX);
-//  channel_rudder->radio_out   = constrain_int16(AA241X_rudder_servo_PWM,   PWM_MIN, PWM_MAX);
-//  hal.rcout->write(4, AA241X_flap_servo_PWM);
-//  hal.rcout->write(5, AA241X_roll2_servo_PWM);
 
-// Added dummy commets for first commit
-// More dummy comments
-
-  channel_roll->radio_out     = Roll_servo_PWM;  // consider creating variable called servo_Ch_Out1_PWM, that replaces Roll_servo_PWM.  
-  channel_pitch->radio_out    = Pitch_servo_PWM;  // Likewise for other channels.  This allows the user to define a custom mapping function from control variables to servo channels, using variable naming that is generic (not particular to a given configuration).
-  channel_throttle->radio_out = Throttle_servo_PWM;
-  channel_rudder->radio_out   = Rudder_servo_PWM;
-  hal.rcout->write(4, flap_servo_PWM);
-  hal.rcout->write(5, roll2_servo_PWM);
+  channel_roll->radio_out     = Servo_Ch1_PWM; 
+  channel_pitch->radio_out    = Servo_Ch2_PWM;  
+  channel_throttle->radio_out = Servo_Ch3_PWM;
+  channel_rudder->radio_out   = Servo_Ch4_PWM;
+  hal.rcout->write(4, Servo_Ch5_PWM);  // Note: rcout numbering starts at 0, while our channel enumeration starts at 1
+  hal.rcout->write(5, Servo_Ch6_PWM);
+  hal.rcout->write(6, Servo_Ch7_PWM);
+  
 
 }
 
@@ -111,24 +80,6 @@ static void update_Last_AUTO_time_and_Main_loop_deltaTime(void){
 }
 
 static void AA241X_AUX_MediumLoop(void){
-//    uint8_t countt = 0;
-//    while (hal.uartE->available() > 0) {
-////        uint8_t data = hal.uartE->read();
-//        countt++;
-//        //        hal.uartE->write(data+1);
-//        //        uint8_t a = hal.uartE->read();
-//        //        uint8_t b = hal.uartE->read();
-//        //        uint8_t c = hal.uartE->read();
-//        //        uint8_t d = hal.uartE->read();
-//        //        uint8_t e = hal.uartE->read();
-//        float f = readFloat();
-//        Debug("Attempting to %f", f);
-//        
-//	}
-//    if (countt != 0) {Debug("Attempting to %d", countt);}
-    
-    
-    
   if (control_mode == AUTO)
   {
       AA241X_AUTO_MediumLoop();

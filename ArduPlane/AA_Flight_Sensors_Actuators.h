@@ -79,12 +79,13 @@ static float roll2_servo;    // Servo associated with Channel 6
 // IMPORTANT: servos will only be updated when UAV is in AUTO mode
 //            and with whatever values ar being set in AA241X_AUTO_FastLoop().
 //            They can't be updated from MediumLoop() nor SlowLoop()
-static int16_t Roll_servo_PWM;     // Servo associated with Channel 1 
-static int16_t Pitch_servo_PWM;    // Servo associated with Channel 2
-static int16_t Throttle_servo_PWM; // Servo associated with Channel 3
-static int16_t Rudder_servo_PWM;   // Servo associated with Channel 4
-static int16_t flap_servo_PWM;     // Servo associated with Channel 5
-static int16_t roll2_servo_PWM;    // Servo associated with Channel 6
+static int16_t Servo_Ch1_PWM;     // Servo associated with Channel 1 
+static int16_t Servo_Ch2_PWM;    // Servo associated with Channel 2
+static int16_t Servo_Ch3_PWM; // Servo associated with Channel 3
+static int16_t Servo_Ch4_PWM;   // Servo associated with Channel 4
+static int16_t Servo_Ch5_PWM;     // Servo associated with Channel 5
+static int16_t Servo_Ch6_PWM;    // Servo associated with Channel 6
+static int16_t Servo_Ch7_PWM;    // Servo associated with Channel 6
 
 // Position to which the servos are commanded by the RC Transmitter, in % of full range (i.e. 0.0 = lower physical limit, 100.0 = upper physical limit)
 static float RC_roll;      // Command read on Input 1, coming from the RC Transmitter, through the receiver
