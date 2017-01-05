@@ -609,24 +609,12 @@ static int8_t outside_linear_space(float x,float y,float x_o, float y_o){
 // RIGHT AILERON
 static int16_t angle2pwm_right_aileron(float angle){
   // Positive aileron angle deflection induces a left rolling moment (right aileron trailing edge down)
-  static int16_t trim_pwm = RIGHT_AILERON_TRIM_PWM;
-  static int16_t positive_throw_pwm = RIGHT_AIELERON_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = RIGHT_AIELERON_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = RIGHT_AIELERON_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = RIGHT_AIELERON_FULL_RIGHT_ANGLE;
-  
-  return angle2pwm(angle, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return angle2pwm(angle, RIGHT_AILERON_TRIM_PWM, RIGHT_AIELERON_FULL_LEFT_PWM, RIGHT_AIELERON_FULL_RIGHT_PWM, RIGHT_AIELERON_FULL_LEFT_ANGLE, RIGHT_AIELERON_FULL_RIGHT_ANGLE);
 };
 
 static int16_t fraction_deflection2pwm_right_aileron(float fraction_deflection){
   // Positive aileron angle deflection induces a left rolling moment (right aileron trailing edge down)
-  static int16_t trim_pwm = RIGHT_AILERON_TRIM_PWM;
-  static int16_t positive_throw_pwm = RIGHT_AIELERON_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = RIGHT_AIELERON_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = RIGHT_AIELERON_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = RIGHT_AIELERON_FULL_RIGHT_ANGLE;
-  
-  return fraction_deflection2pwm(fraction_deflection, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return fraction_deflection2pwm(fraction_deflection, RIGHT_AILERON_TRIM_PWM, RIGHT_AIELERON_FULL_LEFT_PWM, RIGHT_AIELERON_FULL_RIGHT_PWM, RIGHT_AIELERON_FULL_LEFT_ANGLE, RIGHT_AIELERON_FULL_RIGHT_ANGLE);
 };
 
 static float pwm2angle_right_aileron(float ch1_pwm){
@@ -651,24 +639,12 @@ static float pwm2angle_right_aileron(float ch1_pwm){
 // LEFT AILERON
 static int16_t angle2pwm_left_aileron(float angle){
   // Positive aileron angle deflection induces a left rolling moment (left aileron trailing edge up)
-  static int16_t trim_pwm = LEFT_AILERON_TRIM_PWM;
-  static int16_t positive_throw_pwm = LEFT_AIELERON_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = LEFT_AIELERON_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = LEFT_AIELERON_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = LEFT_AIELERON_FULL_RIGHT_ANGLE;
-  
-  return angle2pwm(angle, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return angle2pwm(angle, LEFT_AILERON_TRIM_PWM, LEFT_AIELERON_FULL_LEFT_PWM, LEFT_AIELERON_FULL_RIGHT_PWM, LEFT_AIELERON_FULL_LEFT_ANGLE, LEFT_AIELERON_FULL_RIGHT_ANGLE);
 };
 
 static int16_t fraction_deflection2pwm_left_aileron(float fraction_deflection){
   // Positive aileron angle deflection induces a left rolling moment (left aileron trailing edge up)
-  static int16_t trim_pwm = LEFT_AILERON_TRIM_PWM;
-  static int16_t positive_throw_pwm = LEFT_AIELERON_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = LEFT_AIELERON_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = LEFT_AIELERON_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = LEFT_AIELERON_FULL_RIGHT_ANGLE;
-  
-  return fraction_deflection2pwm(fraction_deflection, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return fraction_deflection2pwm(fraction_deflection, LEFT_AILERON_TRIM_PWM, LEFT_AIELERON_FULL_LEFT_PWM, LEFT_AIELERON_FULL_RIGHT_PWM, LEFT_AIELERON_FULL_LEFT_ANGLE, LEFT_AIELERON_FULL_RIGHT_ANGLE);
 };
 
 
@@ -677,13 +653,7 @@ static int16_t fraction_deflection2pwm_left_aileron(float fraction_deflection){
 // ELEVATOR
 static int16_t angle2pwm_elevator(float angle){
   // Positive elevator deflection induces a pitch down moment (elevator trailing edge down)
-  static int16_t trim_pwm = ELEVATOR_TRIM_PWM;
-  static int16_t positive_throw_pwm = ELEVATOR_FULL_DOWN_PWM;
-  static int16_t negative_throw_pwm = ELEVATOR_FULL_UP_PWM;  
-  static float positive_throw_angle = ELEVATOR_FULL_DOWN_ANGLE;
-  static float negative_throw_angle = ELEVATOR_FULL_UP_ANGLE;
-  
-  return angle2pwm(angle, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return angle2pwm(angle, ELEVATOR_TRIM_PWM, ELEVATOR_FULL_DOWN_PWM, ELEVATOR_FULL_UP_PWM, ELEVATOR_FULL_DOWN_ANGLE, ELEVATOR_FULL_UP_ANGLE);
 };
 
 static float pwm2angle_elevator(float ch2_pwm){
@@ -705,49 +675,29 @@ static float pwm2angle_elevator(float ch2_pwm){
 };
 
 
-
 ////////
 // RUDDER
 static int16_t angle2pwm_rudder(float angle){
   // Positive rudder angle deflection induces a left yawing moment (rudder trailing edge left)
-  static int16_t trim_pwm = RUDDER_TRIM_PWM;
-  static int16_t positive_throw_pwm = RUDDER_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = RUDDER_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = RUDDER_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = RUDDER_FULL_RIGHT_ANGLE;
-  
-  return angle2pwm(angle, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return angle2pwm(angle, RUDDER_TRIM_PWM, RUDDER_FULL_LEFT_PWM, RUDDER_FULL_RIGHT_PWM, RUDDER_FULL_LEFT_ANGLE, RUDDER_FULL_RIGHT_ANGLE);
 };
 
 static int16_t fraction_deflection2pwm_rudder(float fraction_deflection){
   // Positive aileron angle deflection induces a left rolling moment (left aileron trailing edge up)
-  static int16_t trim_pwm = RUDDER_TRIM_PWM;
-  static int16_t positive_throw_pwm = RUDDER_FULL_LEFT_PWM;
-  static int16_t negative_throw_pwm = RUDDER_FULL_RIGHT_PWM;  
-  static float positive_throw_angle = RUDDER_FULL_LEFT_ANGLE;
-  static float negative_throw_angle = RUDDER_FULL_RIGHT_ANGLE;
-  
-  return fraction_deflection2pwm(fraction_deflection, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return fraction_deflection2pwm(fraction_deflection, RUDDER_TRIM_PWM, RUDDER_FULL_LEFT_PWM, RUDDER_FULL_RIGHT_PWM, RUDDER_FULL_LEFT_ANGLE, RUDDER_FULL_RIGHT_ANGLE);
 };
 
 //////
 // FLAP
 static int16_t angle2pwm_flap(float angle){
   // Positive flap angle deflection causes a trailing edge down deflection
-  static int16_t trim_pwm = FLAP_TRIM_PWM;
-  static int16_t positive_throw_pwm = FLAP_FULL_DOWN_PWM;
-  static int16_t negative_throw_pwm = FLAP_TRIM_PWM;  
-  static float positive_throw_angle = FLAP_FULL_DOWN_ANGLE;
-  static float negative_throw_angle = 1.0;
-  
-  return angle2pwm(angle, trim_pwm, positive_throw_pwm, negative_throw_pwm, positive_throw_angle, negative_throw_angle);
+  return angle2pwm(angle, FLAP_TRIM_PWM, FLAP_FULL_DOWN_PWM, FLAP_TRIM_PWM, FLAP_FULL_DOWN_ANGLE, 1.0);
 };
 
 ////////
 // THROTTLE
 static int16_t fraction2pwm_throttle(float throttle_fraction_command){
   int16_t pwm = THROTTLE_OFF_PWM + throttle_fraction_command*(THROTTLE_MAX_PWM - THROTTLE_OFF_PWM);
-  
   return pwm;
 };
 
