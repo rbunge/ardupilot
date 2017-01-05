@@ -17,37 +17,37 @@
 #define  AUTO_LEVEL_FLIGHT 5
 #define  MANUAL_AUTO_LEVEL_FLIGHT 6
 
-//////////// 1/5-SUPER CUB, THROWS AND SERVO PWM VALUES
-// CONTROL SURFACE THROWS
-#define ELEVATOR_FULL_UP_ANGLE 41.0
-#define ELEVATOR_FULL_DOWN_ANGLE 30.0
-#define RUDDER_FULL_LEFT_ANGLE 27.0
-#define RUDDER_FULL_RIGHT_ANGLE 28.0
-#define RIGHT_AIELERON_FULL_LEFT_ANGLE 28.0
-#define RIGHT_AIELERON_FULL_RIGHT_ANGLE 32.0
-#define LEFT_AIELERON_FULL_LEFT_ANGLE 34.0
-#define LEFT_AIELERON_FULL_RIGHT_ANGLE 28.0
-#define FLAP_FULL_DOWN_ANGLE 14.5
-
-// PWM TRIM VALUES
-#define ELEVATOR_TRIM_PWM 1543     // In Apr 3 and 4, this used to be 1528 in the code
-#define RUDDER_TRIM_PWM 1451
-#define RIGHT_AILERON_TRIM_PWM 1509
-#define LEFT_AILERON_TRIM_PWM 1481
-#define FLAP_TRIM_PWM 1735
-
-// PWM THROW VALUES
-#define ELEVATOR_FULL_UP_PWM 1000    // Apr 3 and 4: 984
-#define ELEVATOR_FULL_DOWN_PWM 1942  // Apr 3 and 4: 1926
-#define RUDDER_FULL_LEFT_PWM 1847
-#define RUDDER_FULL_RIGHT_PWM 1067
-#define RIGHT_AIELERON_FULL_LEFT_PWM 1864
-#define RIGHT_AIELERON_FULL_RIGHT_PWM 1120
-#define LEFT_AIELERON_FULL_LEFT_PWM 1871
-#define LEFT_AIELERON_FULL_RIGHT_PWM 1124
-#define FLAP_FULL_DOWN_PWM 1516
-#define THROTTLE_OFF_PWM 1190
-#define THROTTLE_MAX_PWM 1918
+////////////// 1/5-SUPER CUB, THROWS AND SERVO PWM VALUES
+//// CONTROL SURFACE THROWS
+//#define ELEVATOR_FULL_UP_ANGLE 41.0
+//#define ELEVATOR_FULL_DOWN_ANGLE 30.0
+//#define RUDDER_FULL_LEFT_ANGLE 27.0
+//#define RUDDER_FULL_RIGHT_ANGLE 28.0
+//#define RIGHT_AIELERON_FULL_LEFT_ANGLE 28.0
+//#define RIGHT_AIELERON_FULL_RIGHT_ANGLE 32.0
+//#define LEFT_AIELERON_FULL_LEFT_ANGLE 34.0
+//#define LEFT_AIELERON_FULL_RIGHT_ANGLE 28.0
+//#define FLAP_FULL_DOWN_ANGLE 14.5
+//
+//// PWM TRIM VALUES
+//#define ELEVATOR_TRIM_PWM 1543     // In Apr 3 and 4, this used to be 1528 in the code
+//#define RUDDER_TRIM_PWM 1451
+//#define RIGHT_AILERON_TRIM_PWM 1509
+//#define LEFT_AILERON_TRIM_PWM 1481
+//#define FLAP_TRIM_PWM 1735
+//
+//// PWM THROW VALUES
+//#define ELEVATOR_FULL_UP_PWM 1000    // Apr 3 and 4: 984
+//#define ELEVATOR_FULL_DOWN_PWM 1942  // Apr 3 and 4: 1926
+//#define RUDDER_FULL_LEFT_PWM 1847
+//#define RUDDER_FULL_RIGHT_PWM 1067
+//#define RIGHT_AIELERON_FULL_LEFT_PWM 1864
+//#define RIGHT_AIELERON_FULL_RIGHT_PWM 1120
+//#define LEFT_AIELERON_FULL_LEFT_PWM 1871
+//#define LEFT_AIELERON_FULL_RIGHT_PWM 1124
+//#define FLAP_FULL_DOWN_PWM 1516
+//#define THROTTLE_OFF_PWM 1190
+//#define THROTTLE_MAX_PWM 1918
 
 
 //////////// 1/4-SUPER CUB, THROWS AND SERVO PWM VALUES
@@ -82,66 +82,26 @@
 #define THROTTLE_OFF_PWM 1190
 #define THROTTLE_MAX_PWM 1918
 
-
-static int8_t     my_signed_8_bit_variable = 10;  // integer numbers between -128 and 127
-static uint8_t    my_unsigned_8_bit_variable = 10;  // positive integer numbers between 0 and 255
-
-static int16_t    my_signed_16_bit_variable = 10;  // integer numbers between −32768 and 32767
-static uint16_t   my_unsigned_16_bit_variable = 10;  // positive integer numbers between 0 and 65535
-
-static int32_t    my_signed_32_bit_variable = 10;  // integer numbers between −2147483648 and 2147483647
-static uint32_t   my_unsigned_32_bit_variable = 10;  // positive integer numbers between 0 and 4294967295
-static float      my_float;
-
-static int8_t local_state;
-
-
-
 // These functions are executed when control mode is in AUTO
 // Please read AA241X_aux.h for all necessary definitions and interfaces
 
 // *****   AA241X Fast Loop - @ ~50Hz   ***** //
 static void AA241X_AUTO_FastLoop(void) {
-  // YOUR CODE HERE
-  // Example:
-  static float cos_roll;
-  static float sin_roll;
-  static float RC_roll2_trim;
-
   
   // Checking if we've just switched to AUTO. If more than 100ms have gone past since last time in AUTO, then we are definitely just entering AUTO
   if ((CPU_time_ms - Last_AUTO_stampTime_ms) > 100) {
-    // Then we've just switched to AUTO, and need to save the flight 
-    // data as the trim condition we want to control around. Used for PS2
+    // Then we've just switched to AUTO, and need to save the flight data as the trim condition we want to control around. Used for PS2
     local_state = MANUAL_FLIGHT;
-    //RC_roll2_trim = RC_roll;
   }
   
+  // Running state machine and appropriate controller
   run_state_machine();
   run_controller();
-
-
-
-  
-//  Servo_Ch1_PWM     = 1500 + 500*roll_att/3.142;
-//  Servo_Ch2_PWM    = RC_pitch_PWM;
-//  Servo_Ch3_PWM = 800;
-//  Servo_Ch4_PWM   = 1500;
-//  
-//  
-//  
-//  Servo_Ch5_PWM     = 1500;
-//  Servo_Ch6_PWM    = 1500;
-  
-  
-
-//  Roll_servo     = RC_Roll_Trim + (2*roll_att/PI)*100;
-//  Pitch_servo    = RC_Pitch_Trim + (2*pitch_att/PI)*100;
-//  Throttle_servo = 0;
-//  Rudder_servo   = RC_Rudder_Trim + (2*yaw_att/PI)*100;
-//  flap_servo = RC_flap;
-//  roll2_servo = RC_roll2;
 };
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////// STATE MACHINE ///////////////////////////////////////
@@ -358,15 +318,15 @@ static void manual_spin_approach_controller(void){
   
   // Baseline controls
   Servo_Ch1_PWM     = RC_roll_PWM;
-  Servo_Ch2_PWM    = RC_pitch_PWM;
-  Servo_Ch3_PWM = RC_throttle_PWM;
-  Servo_Ch4_PWM   = RC_rudder_PWM;
+  Servo_Ch2_PWM     = RC_pitch_PWM;
+  Servo_Ch3_PWM     = RC_throttle_PWM;
+  Servo_Ch4_PWM     = RC_rudder_PWM;
   Servo_Ch5_PWM     = RC_flap_PWM;
-  Servo_Ch6_PWM    = RC_roll2_PWM;
+  Servo_Ch6_PWM     = RC_roll2_PWM;
   
-  float elev_angle = pwm2angle_elevator(RC_pitch_PWM);  // passthrough RC elevator
-  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate; // autolevel aileron
-  float dr = a_k_r*yaw_Rate;  // yaw 
+//  float elev_angle = pwm2angle_elevator(RC_pitch_PWM);  // passthrough RC elevator
+//  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate; // autolevel aileron
+//  float dr = a_k_r*yaw_Rate;  // yaw 
   
   
 //  switch (uint16_t(AA_Test_Set)) {
@@ -410,75 +370,77 @@ static void spin_arrest_controller(void){
   float da_left = 0;
   float da_right = 0;
   float elev_angle = arrest_elevator_angle;
-  float dr = 0;  // dr =  sign_f(yaw_Rate);  // rudder  full anti-spin
+  float dr =  sign_f(yaw_Rate);  // rudder  full anti-spin
   float dt = 0;
-  float df = 0;
+  float flap_angle = 0;
   
-  // Perturb controls from the baseline according to the test
-  switch (uint16_t(AA_Test_Set)) {
-    case 1:
-      if (AA_Test_SNbr == 1){ elev_angle = -20 ;};
-      if (AA_Test_SNbr == 2){ elev_angle = -15 ;};
-      if (AA_Test_SNbr == 3){ elev_angle = -10 ;};
-      if (AA_Test_SNbr == 4){ elev_angle =  arrest_elevator_angle ;};
-      break;
-   case 2:
-      elev_angle = -10;
-      break;
-   case 3:
-      if (AA_Test_SNbr == 1){elev_angle = 0;};
-      if (AA_Test_SNbr == 2){elev_angle = 10;};
-      if (AA_Test_SNbr == 3){elev_angle = 20;};
-      if (AA_Test_SNbr == 4){elev_angle = arrest_elevator_angle ;};
-      break;
-   case 5:
-      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
-      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
-      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
-      da_left  = da;
-      da_right = da;
-      break;
-   case 6:
-      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
-      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
-      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
-      elev_angle = -10;
-      da_left  = da;
-      da_right = da;
-      break;
-   case 8:
-      elev_angle = -10;
-      break; 
-   case 14:
-   case 15:
-   case 16:
-      elev_angle = arrest_elevator_angle;
-      da =  -sign_f(roll_Rate)*A_da_arrest;
-      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-      da_left  = da;
-      da_right = da;
-      break;
-   case 17:
-      elev_angle = arrest_elevator_angle;
-      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-      if ( roll_Rate > 0) {da_left = 1; da_right = 0;};
-      if ( roll_Rate < 0) {da_left = 0; da_right = -1;};
-     break;
-   case 18:
-      elev_angle = arrest_elevator_angle;
-      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-      da_left = 1;   // left aileron full trailing edge up
-      da_right = -1; // right aileron full trailing edged up
-     break;
-   };   
+//  // Perturb controls from the baseline according to the test
+//  switch (uint16_t(AA_Test_Set)) {
+//    case 1:
+//      if (AA_Test_SNbr == 1){ elev_angle = -20 ;};
+//      if (AA_Test_SNbr == 2){ elev_angle = -15 ;};
+//      if (AA_Test_SNbr == 3){ elev_angle = -10 ;};
+//      if (AA_Test_SNbr == 4){ elev_angle =  arrest_elevator_angle ;};
+//      break;
+//   case 2:
+//      elev_angle = -10;
+//      break;
+//   case 3:
+//      if (AA_Test_SNbr == 1){elev_angle = 0;};
+//      if (AA_Test_SNbr == 2){elev_angle = 10;};
+//      if (AA_Test_SNbr == 3){elev_angle = 20;};
+//      if (AA_Test_SNbr == 4){elev_angle = arrest_elevator_angle ;};
+//      break;
+//   case 5:
+//      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
+//      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
+//      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
+//      da_left  = da;
+//      da_right = da;
+//      break;
+//   case 6:
+//      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
+//      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
+//      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
+//      elev_angle = -10;
+//      da_left  = da;
+//      da_right = da;
+//      break;
+//   case 8:
+//      elev_angle = -10;
+//      break; 
+//   case 14:
+//   case 15:
+//   case 16:
+//      elev_angle = arrest_elevator_angle;
+//      da =  -sign_f(roll_Rate)*A_da_arrest;
+//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
+//      da_left  = da;
+//      da_right = da;
+//      break;
+//   case 17:
+//      elev_angle = arrest_elevator_angle;
+//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
+//      if ( roll_Rate > 0) {da_left = 1; da_right = 0;};
+//      if ( roll_Rate < 0) {da_left = 0; da_right = -1;};
+//     break;
+//   case 18:
+//      elev_angle = arrest_elevator_angle;
+//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
+//      da_left = 1;   // left aileron full trailing edge up
+//      da_right = -1; // right aileron full trailing edged up
+//     break;
+//   };   
  
-  // Write control positions to actuators
-  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da_right);
-  Servo_Ch2_PWM    = angle2pwm_elevator( elev_angle );
-  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
-  Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);
-  Servo_Ch5_PWM     = angle2pwm_flap(df);
-  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da_left);
+  // Set actuators from control variables 
+  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  
+//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da_right);
+//  Servo_Ch2_PWM    = angle2pwm_elevator( elev_angle );
+//  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
+//  Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);
+//  Servo_Ch5_PWM     = angle2pwm_flap(df);
+//  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da_left);
 };
 
 
@@ -491,65 +453,84 @@ static void pullout_controller(void){
   float elev_angle = pullout_elevator_angle;
   float dr = 0;
   float dt = 0;
-  float df = 0;
+  float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
-  // Perturb controls from the baseline according to the test
-  switch (uint16_t(AA_Test_Set)) {
-    case 1:
-      elev_angle = 0;
-      da = 0;
-      break;
-    case 2:
-      if (AA_Test_SNbr == 1){ elev_angle = -5 ;};
-      if (AA_Test_SNbr == 2){ elev_angle = -10 ;};
-      if (AA_Test_SNbr == 3){ elev_angle = -15 ;};
-      if (AA_Test_SNbr == 4){ elev_angle = pullout_elevator_angle ;};
-      da = 0;
-      break;
-    case 3:
-      da = 0;
-      break;
-    case 4:
-      if (AA_Test_SNbr == 1){ k_phi = 0.2 ;};
-      if (AA_Test_SNbr == 2){ k_phi = 0.8 ;};
-      if (AA_Test_SNbr == 3){ k_phi = 1.2 ;};
-      if (AA_Test_SNbr == 4){ k_phi = aa_k_phi ;};
-      da = k_phi*(roll_att - A_roll_0*3.142/180.0);
-      break;
-    case 9:
-      elev_angle = elevator_CN_controller(1.0);
-     break; 
-   };   
-
-  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-  Servo_Ch2_PWM    = angle2pwm_elevator(elev_angle);
-  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
-  Servo_Ch4_PWM   = angle2pwm_rudder(dr);
-  Servo_Ch5_PWM     = angle2pwm_flap(df);
-  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da);
+    // Set actuators from control variables 
+  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  
+//  // Perturb controls from the baseline according to the test
+//  switch (uint16_t(AA_Test_Set)) {
+//    case 1:
+//      elev_angle = 0;
+//      da = 0;
+//      break;
+//    case 2:
+//      if (AA_Test_SNbr == 1){ elev_angle = -5 ;};
+//      if (AA_Test_SNbr == 2){ elev_angle = -10 ;};
+//      if (AA_Test_SNbr == 3){ elev_angle = -15 ;};
+//      if (AA_Test_SNbr == 4){ elev_angle = pullout_elevator_angle ;};
+//      da = 0;
+//      break;
+//    case 3:
+//      da = 0;
+//      break;
+//    case 4:
+//      if (AA_Test_SNbr == 1){ k_phi = 0.2 ;};
+//      if (AA_Test_SNbr == 2){ k_phi = 0.8 ;};
+//      if (AA_Test_SNbr == 3){ k_phi = 1.2 ;};
+//      if (AA_Test_SNbr == 4){ k_phi = aa_k_phi ;};
+//      da = k_phi*(roll_att - A_roll_0*3.142/180.0);
+//      break;
+//    case 9:
+//      elev_angle = elevator_CN_controller(1.0);
+//     break; 
+//   };   
+//
+//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
+//  Servo_Ch2_PWM    = angle2pwm_elevator(elev_angle);
+//  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
+//  Servo_Ch4_PWM   = angle2pwm_rudder(dr);
+//  Servo_Ch5_PWM     = angle2pwm_flap(df);
+//  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da);
 };
 
 
-// Auto level flight controller
+//////////////////////////// AUTO-LEVEL CONTOLLER ////////////////////////////
 static void auto_level_flight_controller(void){
   float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate;
-  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-  Servo_Ch2_PWM    = angle2pwm_elevator(0);
-  Servo_Ch3_PWM = fraction2pwm_throttle(A_dt_level);
-  Servo_Ch4_PWM   = angle2pwm_rudder(0);
-  Servo_Ch5_PWM     = angle2pwm_flap(0);
-  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da);
+  float elev_angle = 0;
+  float dr = 0;
+  float dt = A_dt_level;
+  float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
+  
+    // Set actuators from control variables 
+  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  
+//  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate;
+//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
+//  Servo_Ch2_PWM     = angle2pwm_elevator(0);
+//  Servo_Ch3_PWM     = fraction2pwm_throttle(A_dt_level);
+//  Servo_Ch4_PWM     = angle2pwm_rudder(0);
+//  Servo_Ch5_PWM     = angle2pwm_flap(0);
+//  Servo_Ch6_PWM     = fraction_deflection2pwm_left_aileron(da);
 };
 
 
 static void manual_auto_level_controller(void){
   float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate;
-  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-  Servo_Ch2_PWM    = RC_pitch_PWM;
-  Servo_Ch3_PWM = RC_throttle_PWM;
-  Servo_Ch4_PWM   = RC_rudder_PWM;
+  float elev_angle = 0;
+  float dr = 0;
+  float dt = A_dt_level;
+  float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
+  
+  // Set actuators from control variables 
+  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  
+  // Overwrite all servos with RC PWM values, except for ailerons
+  Servo_Ch2_PWM     = RC_pitch_PWM;
+  Servo_Ch3_PWM     = RC_throttle_PWM;
+  Servo_Ch4_PWM     = RC_rudder_PWM;
   Servo_Ch5_PWM     = RC_flap_PWM;
-  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da);
 };
 
 
@@ -806,7 +787,7 @@ float sign_f(float f){
 /////////////////////////////////////////////////////////////
 /// MAPPING BETWWEEN CONTROL VARIABLES AND ACTUATOR COMMANDS
 /////////////////////////////////////////////////////////////
-void map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float fap_angle){
+void map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle){
   
   // 1/4-Super Cub
   Servo_Ch1_PWM = fraction_deflection2pwm_left_aileron( da );
