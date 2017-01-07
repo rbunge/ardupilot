@@ -81,12 +81,12 @@ void map_control_vars_to_actuators(float elev_angle, float da, float dr, float d
   
   // 1/4-Super Cub
   Servo_Ch1_PWM = fraction_deflection2pwm_left_aileron( da );
-  Servo_Ch2_PWM = angle2pwm_left_elevator( elev_angle );
+//  Servo_Ch2_PWM = angle2pwm_left_elevator( elev_angle );
   Servo_Ch3_PWM = fraction2pwm_throttle( dt );
   Servo_Ch4_PWM = fraction_deflection2pwm_rudder( dr );
   Servo_Ch5_PWM = angle2pwm_flap( flap_angle );
   Servo_Ch6_PWM = fraction_deflection2pwm_right_aileron( da );
-  Servo_Ch7_PWM = angle2pwm_right_elevator( elev_angle );
+//  Servo_Ch7_PWM = angle2pwm_right_elevator( elev_angle );
   
 }
 
