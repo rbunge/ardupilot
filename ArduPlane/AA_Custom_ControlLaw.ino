@@ -179,7 +179,7 @@ static int8_t Spin_Detected(void){
   //Parameters:  A_p_dot_o, A_p_o, A_k_da, A_Eta
   p_dot_R = A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
   p_dot_L = -A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  float da = pwm2angle_right_aileron(RC_roll_PWM);
+  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
   float Eta_spin = 2;
  
   switch (uint16_t(AA_Test_Set)) {
@@ -231,7 +231,7 @@ static int8_t Arrest_Detected(void){
   //Parameters:  A_p_dot_o, A_p_o, A_k_da, A_Eta
   p_dot_R = A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
   p_dot_L = -A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  float da = pwm2angle_right_aileron(RC_roll_PWM);
+  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
   float Eta_arrest = -2;
   
   switch (uint16_t(AA_Test_Set)) {
@@ -303,12 +303,13 @@ static void run_controller(void){
 //Manual flight controller
 static void manual_flight_controller(void){
   
-  Servo_Ch1_PWM     = RC_roll_PWM;
-  Servo_Ch2_PWM    = RC_pitch_PWM;
-  Servo_Ch3_PWM = RC_throttle_PWM;
-  Servo_Ch4_PWM   = RC_rudder_PWM;
-  Servo_Ch5_PWM     = RC_flap_PWM;
-  Servo_Ch6_PWM    = RC_roll2_PWM;
+  Servo_Ch1_PWM = RC_In_Ch1_PWM;
+  Servo_Ch2_PWM = RC_In_Ch2_PWM;
+  Servo_Ch3_PWM = RC_In_Ch3_PWM;
+  Servo_Ch4_PWM = RC_In_Ch4_PWM;
+  Servo_Ch5_PWM = RC_In_Ch5_PWM;
+  Servo_Ch6_PWM = RC_In_Ch6_PWM;
+  Servo_Ch7_PWM = RC_In_Ch7_PWM;
      
 };
 
@@ -317,14 +318,15 @@ static void manual_spin_approach_controller(void){
   float elev_angle_max;
   
   // Baseline controls
-  Servo_Ch1_PWM     = RC_roll_PWM;
-  Servo_Ch2_PWM     = RC_pitch_PWM;
-  Servo_Ch3_PWM     = RC_throttle_PWM;
-  Servo_Ch4_PWM     = RC_rudder_PWM;
-  Servo_Ch5_PWM     = RC_flap_PWM;
-  Servo_Ch6_PWM     = RC_roll2_PWM;
+  Servo_Ch1_PWM = RC_In_Ch1_PWM;
+  Servo_Ch2_PWM = RC_In_Ch2_PWM;
+  Servo_Ch3_PWM = RC_In_Ch3_PWM;
+  Servo_Ch4_PWM = RC_In_Ch4_PWM;
+  Servo_Ch5_PWM = RC_In_Ch5_PWM;
+  Servo_Ch6_PWM = RC_In_Ch6_PWM;
+  Servo_Ch7_PWM = RC_In_Ch7_PWM;
   
-//  float elev_angle = pwm2angle_elevator(RC_pitch_PWM);  // passthrough RC elevator
+//  float elev_angle = pwm2angle_elevator(RC_In_Ch2_PWM);  // passthrough RC elevator
 //  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate; // autolevel aileron
 //  float dr = a_k_r*yaw_Rate;  // yaw 
   
@@ -526,11 +528,12 @@ static void manual_auto_level_controller(void){
   // Set actuators from control variables 
   map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
   
-  // Overwrite all servos with RC PWM values, except for ailerons
-  Servo_Ch2_PWM     = RC_pitch_PWM;
-  Servo_Ch3_PWM     = RC_throttle_PWM;
-  Servo_Ch4_PWM     = RC_rudder_PWM;
-  Servo_Ch5_PWM     = RC_flap_PWM;
+  // Overwrite all servos with RC PWM values, except for ailerons. This is configuration dependent! The only generic way is to compute the equivalent control variables from the RC_In_PWMs and then input these values in "map_control"
+  Servo_Ch2_PWM = RC_In_Ch2_PWM;
+  Servo_Ch3_PWM = RC_In_Ch3_PWM;
+  Servo_Ch4_PWM = RC_In_Ch4_PWM;
+  Servo_Ch5_PWM = RC_In_Ch5_PWM;
+  Servo_Ch7_PWM = RC_In_Ch7_PWM;
 };
 
 
@@ -565,7 +568,7 @@ static void AA241X_AUTO_SlowLoop(void){
 static int8_t RD_exit(void){
   float p       = roll_Rate;
   float p_dot   = roll_Acc;
-  float da      = pwm2angle_right_aileron(RC_roll_PWM);
+  float da      = pwm2angle_right_aileron(RC_In_Ch1_PWM);
   float p_dot_minus_da = p_dot -  A_k_da*da;
   
   return outside_linear_space(p, p_dot_minus_da, A_p_o*PI/180.0, A_p_dot_o*PI/180.0) && p*p_dot_minus_da > 0;
@@ -576,7 +579,7 @@ static int8_t YD_exit(void){
   float p       = roll_Rate;
   float r       = yaw_Rate;
   float r_dot   = yaw_Acc;
-  float dr      = pwm2angle_right_aileron(RC_rudder_PWM);
+  float dr      = pwm2angle_right_aileron(RC_In_Ch4_PWM);
   float k_dr    = 0;  // to reduce false triggering, and becuase pwm2angle_rudder() was not implemented  
   float k_p     = 0;  // to reduce false triggering
   float r_dot_minus_dr_p = r_dot -  k_dr*dr - k_p*p;
@@ -588,7 +591,7 @@ static int8_t YD_exit(void){
 //static int8_t DRD_exit(void){
 //  float p       = roll_Rate;
 //  float p_dot   = roll_Acc;
-//  float da = pwm2angle_right_aileron(RC_roll_PWM);
+//  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
 //  float p_dot_minus_da = p_dot -  A_k_da*da;
 //  
 //  return outside_linear_space(p, p_dot_minus_da, A_p_o, A_p_dot_o);

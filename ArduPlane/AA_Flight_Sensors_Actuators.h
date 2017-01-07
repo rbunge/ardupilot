@@ -96,12 +96,13 @@ static float RC_flap;
 static float RC_roll2; 
 
 // Position to which the servos are commanded by the RC Transmitter, in PWM
-static int16_t RC_roll_PWM;
-static int16_t RC_pitch_PWM;
-static int16_t RC_throttle_PWM;
-static int16_t RC_rudder_PWM;
-static int16_t RC_flap_PWM;
-static int16_t RC_roll2_PWM;
+static int16_t RC_In_Ch1_PWM;
+static int16_t RC_In_Ch2_PWM;
+static int16_t RC_In_Ch3_PWM;
+static int16_t RC_In_Ch4_PWM;
+static int16_t RC_In_Ch5_PWM;
+static int16_t RC_In_Ch6_PWM;
+static int16_t RC_In_Ch7_PWM;
 
 static float RC_Roll_Trim;      // Position of roll stick on RC Transmitter at the instant when control mode switched out of MANUAL, in % of full range. (i.e. 50.0 is halfway, 0.0 all to one side, 100.0 all to the opposite side)
 static float RC_Pitch_Trim;     // Position of pitch stick on RC Transmitter at the instant when control mode switched out of MANUAL, in % of full range

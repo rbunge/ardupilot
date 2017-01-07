@@ -232,19 +232,20 @@ static void update_AA241X_flight_variables(void) {
   
   
   // Read RC signals
-  RC_roll_PWM      = channel_roll->radio_in;
-  RC_pitch_PWM     = channel_pitch->radio_in;
-  RC_throttle_PWM  = channel_throttle->radio_in;
-  RC_rudder_PWM    = channel_rudder->radio_in;
-  RC_flap_PWM      = hal.rcin->read(4);
-  RC_roll2_PWM     = hal.rcin->read(5);
+  RC_In_Ch1_PWM = channel_roll->radio_in;
+  RC_In_Ch2_PWM = channel_pitch->radio_in;
+  RC_In_Ch3_PWM = channel_throttle->radio_in;
+  RC_In_Ch4_PWM = channel_rudder->radio_in;
+  RC_In_Ch5_PWM = hal.rcin->read(4);
+  RC_In_Ch6_PWM = hal.rcin->read(5);
+  RC_In_Ch7_PWM = hal.rcin->read(6);
     
-  RC_roll     = 100*((float)(RC_roll_PWM     - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
-  RC_pitch    = 100*((float)(RC_pitch_PWM    - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
-  RC_throttle = 100*((float)(RC_throttle_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
-  RC_rudder   = 100*((float)(RC_rudder_PWM   - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
-  RC_flap     = 100*((float)(RC_flap_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
-  RC_roll2    = 100*((float)(RC_roll2_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_roll     = 100*((float)(RC_In_Ch1_PWM     - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_pitch    = 100*((float)(RC_In_Ch2_PWM    - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_throttle = 100*((float)(RC_In_Ch3_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_rudder   = 100*((float)(RC_In_Ch4_PWM   - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_flap     = 100*((float)(RC_In_Ch5_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
+  RC_roll2    = 100*((float)(RC_In_Ch6_PWM - PWM_MIN))/((float)(PWM_MAX - PWM_MIN));
 
   
   // Updating the "RC_Trim" value for each RC Channel input
