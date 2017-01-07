@@ -9,7 +9,6 @@
 
 # define Debug(fmt, args ...)  do {hal.console->printf("%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); hal.scheduler->delay(1); } while(0)
 
-
 #define  MANUAL_FLIGHT 1
 #define  MANUAL_SPIN_APPROACH 2
 #define  ARREST 3
@@ -100,9 +99,6 @@ static void AA241X_AUTO_FastLoop(void) {
 };
 
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////// STATE MACHINE ///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,113 +159,6 @@ static int8_t run_state_machine(void){
 };
 
 
-///// SPIN DETECTION CONDITIONS /////
-static int8_t Spin_Detected(void){
-  
-  // Baseline spin detection parameters
-  float p_dot_R;
-  float p_dot_L;
-  float p       = roll_Rate;
-  float p_dot   = roll_Acc;
-  float r       = yaw_Rate;
-  float r_dot   = yaw_Acc;
-  float k_dr    = -8;
-  float k_p     = -1.5;
-
-  //Parameters:  A_p_dot_o, A_p_o, A_k_da, A_Eta
-  p_dot_R = A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  p_dot_L = -A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
-  float Eta_spin = 2;
- 
-  switch (uint16_t(AA_Test_Set)) {
-    case 7:
-      if (AA_Test_SNbr == 1){ return (fabsf(roll_Rate) > 3.5); };
-      if (AA_Test_SNbr == 2){ return (fabsf(yaw_Rate) >  1.5); };
-      if (AA_Test_SNbr == 3){ 
-        float spin_rate_sqrd = roll_Rate*roll_Rate + yaw_Rate*yaw_Rate;
-        return (spin_rate_sqrd > 3.4*3.4); 
-      };
-      break;
-    case 12:
-      if (AA_Test_SNbr == 4){ Eta_spin = A_Eta_spin; };
-      break;
-    case 13:
-      if (AA_Test_SNbr == 1){ Eta_spin = -3; };
-      if (AA_Test_SNbr == 2){ Eta_spin = -6; };
-      if (AA_Test_SNbr == 3){ Eta_spin = -9; };
-      if (AA_Test_SNbr == 4){ Eta_spin = A_Eta_spin; };
-      break;
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-      if (RD_exit() && YD_exit() && r > A_r_0_detect*PI/180.0){
-          r_spin_detect = yaw_Rate*180/PI;
-          return 1;
-      } else {
-       return 0; 
-      }
-//      return (( r_dot*r > 0) && (fabs(r) > A_r_0_detect*PI/180.0) );
-      break;
-   };
-   
-   if (((p_dot - A_k_da*da) > p_dot_R + Eta_spin) || ((p_dot - A_k_da*da) < p_dot_L - Eta_spin)){ return 1; }
-   
-   return 0;
-}
-
-
-///// ARREST DETECTION CONDITIONS /////
-static int8_t Arrest_Detected(void){
-  
-  // Baseline arrest detection parameters
-  float p_dot_R;
-  float p_dot_L;
-  float p = roll_Rate;  
-  float p_dot = roll_Acc;
-  //Parameters:  A_p_dot_o, A_p_o, A_k_da, A_Eta
-  p_dot_R = A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  p_dot_L = -A_p_dot_o*PI/180.0 - (A_p_dot_o/A_p_o)*p;
-  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
-  float Eta_arrest = -2;
-  
-  switch (uint16_t(AA_Test_Set)) {
-    case 8:
-      if (AA_Test_SNbr == 1){ Eta_arrest = -6; };
-      if (AA_Test_SNbr == 2){ return (fabsf(roll_Rate) < 0.5); };
-      if (AA_Test_SNbr == 3){ return (fabsf(yaw_Rate)  < 0.5); };
-      if (AA_Test_SNbr == 4){ 
-        float spin_rate_sqrd = roll_Rate*roll_Rate + yaw_Rate*yaw_Rate;
-        return (spin_rate_sqrd < 0.5*0.5); 
-      };
-      break;
-    case 12:
-      if (AA_Test_SNbr == 4){ Eta_arrest = A_Eta_arrest; };
-      break;
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-      return 0;
-      Eta_arrest = -12;
-      break;
-  };  
-  
-  if (((p_dot - A_k_da*da) < p_dot_R + Eta_arrest) && ((p_dot - A_k_da*da) > p_dot_L - Eta_arrest)){ return 1; }
-  
-  return 0;
-}
-
-//// LEVEL FLIGHT CONDTION //////
-static int8_t Level_Flight_Condition(void){
-  if (pitch_att - A_pitch_level*3.142/180.0 > 0){
-   return 1; 
-  }
-  return 0;
-};
-
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// CONTTROLLERS ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -328,40 +217,7 @@ static void manual_spin_approach_controller(void){
   
 //  float elev_angle = pwm2angle_elevator(RC_In_Ch2_PWM);  // passthrough RC elevator
 //  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate; // autolevel aileron
-//  float dr = a_k_r*yaw_Rate;  // yaw 
-  
-  
-//  switch (uint16_t(AA_Test_Set)) {
-//    case 10:
-//      if (AA_Test_SNbr == 1){ elev_angle_max = -30 ;};
-//      if (AA_Test_SNbr == 2){ elev_angle_max = -20 ;};
-//      if (AA_Test_SNbr == 3){ elev_angle_max = aa_elev_angle_max ;};
-//      if ( elev_angle < elev_angle_max ) { elev_angle = elev_angle_max;};
-//      Servo_Ch2_PWM = angle2pwm_elevator( elev_angle );
-//      break;
-//    case 11:
-//
-//      if (AA_Test_SNbr == 1){ 
-//        Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-//        Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da); };
-//      if (AA_Test_SNbr == 2){ 
-//        Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);};
-//      if (AA_Test_SNbr == 3){ 
-//        Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-//        Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da); 
-//        Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);};
-//      break;
-//     case 16:
-//     case 17:
-//     case 18:
-////        Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-////        Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da); 
-////        Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);
-//       break;
-       
-  };
-  
-    
+//  float dr = a_k_r*yaw_Rate;  // yaw     
 };
 
 
@@ -375,74 +231,9 @@ static void spin_arrest_controller(void){
   float dr =  sign_f(yaw_Rate);  // rudder  full anti-spin
   float dt = 0;
   float flap_angle = 0;
-  
-//  // Perturb controls from the baseline according to the test
-//  switch (uint16_t(AA_Test_Set)) {
-//    case 1:
-//      if (AA_Test_SNbr == 1){ elev_angle = -20 ;};
-//      if (AA_Test_SNbr == 2){ elev_angle = -15 ;};
-//      if (AA_Test_SNbr == 3){ elev_angle = -10 ;};
-//      if (AA_Test_SNbr == 4){ elev_angle =  arrest_elevator_angle ;};
-//      break;
-//   case 2:
-//      elev_angle = -10;
-//      break;
-//   case 3:
-//      if (AA_Test_SNbr == 1){elev_angle = 0;};
-//      if (AA_Test_SNbr == 2){elev_angle = 10;};
-//      if (AA_Test_SNbr == 3){elev_angle = 20;};
-//      if (AA_Test_SNbr == 4){elev_angle = arrest_elevator_angle ;};
-//      break;
-//   case 5:
-//      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
-//      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
-//      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
-//      da_left  = da;
-//      da_right = da;
-//      break;
-//   case 6:
-//      if (AA_Test_SNbr == 1){ da =  sign_f(roll_Rate); dr = 0;}   // aileron full anti-spin
-//      if (AA_Test_SNbr == 2){ da = -sign_f(roll_Rate); dr = 0;}   // aileron fill pro-spin
-//      if (AA_Test_SNbr == 3){ dr =  sign_f(yaw_Rate);  da = 0;}   // rudder  full anti-spin
-//      elev_angle = -10;
-//      da_left  = da;
-//      da_right = da;
-//      break;
-//   case 8:
-//      elev_angle = -10;
-//      break; 
-//   case 14:
-//   case 15:
-//   case 16:
-//      elev_angle = arrest_elevator_angle;
-//      da =  -sign_f(roll_Rate)*A_da_arrest;
-//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-//      da_left  = da;
-//      da_right = da;
-//      break;
-//   case 17:
-//      elev_angle = arrest_elevator_angle;
-//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-//      if ( roll_Rate > 0) {da_left = 1; da_right = 0;};
-//      if ( roll_Rate < 0) {da_left = 0; da_right = -1;};
-//     break;
-//   case 18:
-//      elev_angle = arrest_elevator_angle;
-//      dr =  -sign_f(yaw_Rate)*A_dr_arrest;
-//      da_left = 1;   // left aileron full trailing edge up
-//      da_right = -1; // right aileron full trailing edged up
-//     break;
-//   };   
  
   // Set actuators from control variables 
   map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
-  
-//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da_right);
-//  Servo_Ch2_PWM    = angle2pwm_elevator( elev_angle );
-//  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
-//  Servo_Ch4_PWM   = fraction_deflection2pwm_rudder(dr);
-//  Servo_Ch5_PWM     = angle2pwm_flap(df);
-//  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da_left);
 };
 
 
@@ -457,43 +248,8 @@ static void pullout_controller(void){
   float dt = 0;
   float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
-    // Set actuators from control variables 
+  // Set actuators from control variables 
   map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
-  
-//  // Perturb controls from the baseline according to the test
-//  switch (uint16_t(AA_Test_Set)) {
-//    case 1:
-//      elev_angle = 0;
-//      da = 0;
-//      break;
-//    case 2:
-//      if (AA_Test_SNbr == 1){ elev_angle = -5 ;};
-//      if (AA_Test_SNbr == 2){ elev_angle = -10 ;};
-//      if (AA_Test_SNbr == 3){ elev_angle = -15 ;};
-//      if (AA_Test_SNbr == 4){ elev_angle = pullout_elevator_angle ;};
-//      da = 0;
-//      break;
-//    case 3:
-//      da = 0;
-//      break;
-//    case 4:
-//      if (AA_Test_SNbr == 1){ k_phi = 0.2 ;};
-//      if (AA_Test_SNbr == 2){ k_phi = 0.8 ;};
-//      if (AA_Test_SNbr == 3){ k_phi = 1.2 ;};
-//      if (AA_Test_SNbr == 4){ k_phi = aa_k_phi ;};
-//      da = k_phi*(roll_att - A_roll_0*3.142/180.0);
-//      break;
-//    case 9:
-//      elev_angle = elevator_CN_controller(1.0);
-//     break; 
-//   };   
-//
-//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-//  Servo_Ch2_PWM    = angle2pwm_elevator(elev_angle);
-//  Servo_Ch3_PWM = fraction2pwm_throttle(dt);
-//  Servo_Ch4_PWM   = angle2pwm_rudder(dr);
-//  Servo_Ch5_PWM     = angle2pwm_flap(df);
-//  Servo_Ch6_PWM    = fraction_deflection2pwm_left_aileron(da);
 };
 
 
@@ -505,16 +261,8 @@ static void auto_level_flight_controller(void){
   float dt = A_dt_level;
   float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
-    // Set actuators from control variables 
+  // Set actuators from control variables 
   map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
-  
-//  float da = aa_k_phi*(roll_att - A_roll_0*3.142/180.0) + aa_k_p*roll_Rate;
-//  Servo_Ch1_PWM     = fraction_deflection2pwm_right_aileron(da);
-//  Servo_Ch2_PWM     = angle2pwm_elevator(0);
-//  Servo_Ch3_PWM     = fraction2pwm_throttle(A_dt_level);
-//  Servo_Ch4_PWM     = angle2pwm_rudder(0);
-//  Servo_Ch5_PWM     = angle2pwm_flap(0);
-//  Servo_Ch6_PWM     = fraction_deflection2pwm_left_aileron(da);
 };
 
 
@@ -537,20 +285,14 @@ static void manual_auto_level_controller(void){
 };
 
 
-
 // Elevator Normal Force Coefficient Controller
 static float elevator_CN_controller(float CN_desired){
  return 0; 
 };
 
-
-
-
-
-
-
-
-
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////// AUXILIARY FUNCTIONS ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // *****   AA241X Medium Loop - @ ~10Hz  *****  //
 static void AA241X_AUTO_MediumLoop(void){
     
@@ -560,53 +302,6 @@ static void AA241X_AUTO_MediumLoop(void){
 static void AA241X_AUTO_SlowLoop(void){
   // YOUR CODE HERE
 };
-///////////////////////////////////////////////////////////////////////////////
-////////////////////////// AUXILIARY FUNCTIONS ////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// Roll divergence exit
-static int8_t RD_exit(void){
-  float p       = roll_Rate;
-  float p_dot   = roll_Acc;
-  float da      = pwm2angle_right_aileron(RC_In_Ch1_PWM);
-  float p_dot_minus_da = p_dot -  A_k_da*da;
-  
-  return outside_linear_space(p, p_dot_minus_da, A_p_o*PI/180.0, A_p_dot_o*PI/180.0) && p*p_dot_minus_da > 0;
-}
-
-// Roll divergence exit
-static int8_t YD_exit(void){
-  float p       = roll_Rate;
-  float r       = yaw_Rate;
-  float r_dot   = yaw_Acc;
-  float dr      = pwm2angle_right_aileron(RC_In_Ch4_PWM);
-  float k_dr    = 0;  // to reduce false triggering, and becuase pwm2angle_rudder() was not implemented  
-  float k_p     = 0;  // to reduce false triggering
-  float r_dot_minus_dr_p = r_dot -  k_dr*dr - k_p*p;
-  
-  return outside_linear_space(r, r_dot_minus_dr_p, A_r_o*PI/180.0, A_r_dot_o*PI/180.0) && r*r_dot_minus_dr_p > 0;
-}
-
-////// Dimensionless roll divergence exit
-//static int8_t DRD_exit(void){
-//  float p       = roll_Rate;
-//  float p_dot   = roll_Acc;
-//  float da = pwm2angle_right_aileron(RC_In_Ch1_PWM);
-//  float p_dot_minus_da = p_dot -  A_k_da*da;
-//  
-//  return outside_linear_space(p, p_dot_minus_da, A_p_o, A_p_dot_o);
-//}
-
-static int8_t outside_linear_space(float x,float y,float x_o, float y_o){
-  float y_R =  y_o - (y_o/x_o)*x;
-  float y_L = -y_o - (y_o/x_o)*x;
-  
-  if ( y > y_R || y < y_L){ return 1; }
-  
- return 0; 
-}
-
-
 
 /////////////
 // RIGHT AILERON
