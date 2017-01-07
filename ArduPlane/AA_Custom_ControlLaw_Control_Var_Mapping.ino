@@ -2,8 +2,8 @@
 #include <math.h>
 #include <AP_Math.h>
 #include "defines.h"
-#include "AA_Custom_ControlLaw.h"
-#include "AA_Flight_Sensors_Actuators.h"
+//#include "AA_Custom_ControlLaw.h"
+//#include "AA_Flight_Sensors_Actuators.h"
 
 // DEFINES
 
