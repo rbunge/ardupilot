@@ -16,6 +16,8 @@
 #define  AUTO_LEVEL_FLIGHT 5
 #define  MANUAL_AUTO_LEVEL_FLIGHT 6
 
+static int8_t local_state;
+
 
 // These functions are executed when control mode is in AUTO
 // Please read AA241X_aux.h for all necessary definitions and interfaces
@@ -169,7 +171,7 @@ static void spin_arrest_controller(void){
   float flap_angle = 0;
  
   // Set actuators from control variables 
-  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  map_control_vars_to_actuators(elev_angle, da, dr, dt, flap_angle);
 };
 
 
@@ -185,7 +187,7 @@ static void pullout_controller(void){
   float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
   // Set actuators from control variables 
-  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  map_control_vars_to_actuators(elev_angle, da,  dr, dt, flap_angle);
 };
 
 
@@ -198,7 +200,7 @@ static void auto_level_flight_controller(void){
   float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
   // Set actuators from control variables 
-  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  map_control_vars_to_actuators( elev_angle,  da,  dr,  dt,  flap_angle);
 };
 
 
@@ -210,7 +212,7 @@ static void manual_auto_level_controller(void){
   float flap_angle = 0;  // consider changing to flap_angle if indeed the control variable is an angle rather than a normalized throw 
   
   // Set actuators from control variables 
-  map_control_vars_to_actuators(float elev_angle, float da, float dr, float dt, float flap_angle)
+  map_control_vars_to_actuators( elev_angle,  da,  dr,  dt, flap_angle);
   
   // Overwrite all servos with RC PWM values, except for ailerons. This is configuration dependent! The only generic way is to compute the equivalent control variables from the RC_In_PWMs and then input these values in "map_control"
   Servo_Ch2_PWM = RC_In_Ch2_PWM;
